@@ -1,3 +1,6 @@
+# Ignore environment variables file
+.env
+
 HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar

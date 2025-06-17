@@ -1,0 +1,62 @@
+stages:
+  - build
+  - test
+  - analyze
+  - package
+  - deploy
+
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+  IMAGE_TAG: "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA"
+
+cache:
+  paths:
+    - .m2/repository
+
+# Build stage
+build:
+  stage: build
+  image: maven:3.8.5-openjdk-17
+  script:
+    - mvn clean compile
+  artifacts:
+    paths:
+      - target/
+
+# Test stage
+test:
+  stage: test
+  image: maven:3.8.5-openjdk-17
+  dependencies:
+    - build
+  script:
+    - mvn test
+
+# Code analysis with SonarQube
+sonarqube_scan:
+  stage: analyze
+  image: maven:3.8.5-openjdk-17
+  dependencies:
+    - build
+  variables:
+    SONAR_HOST_URL: "http://localhost:9000/"
+    SONAR_TOKEN: "$SONAR_TOKEN"
+  script:
+    - mvn sonar:sonar -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_TOKEN
+
+# Build Docker image and push to registry
+docker_build_and_push:
+  stage: package
+  image: docker:20.10.16-dind
+  services:
+    - docker:dind
+  dependencies:
+    - build
+  variables:
+    DOCKER_DRIVER: overlay2
+    # Регистрация в GitLab Registry (по умолчанию)
+    IMAGE_TAG: "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA"
+  script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    - docker build -t $IMAGE_TAG .
+    - docker push $IMAGE_TAG

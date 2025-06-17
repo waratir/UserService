@@ -12,10 +12,10 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/card_info")
+@RequestMapping("/api/user")
 @RequiredArgsConstructor
 public class UsersController {
-    UsersService usersService;
+    private final UsersService usersService;
 
     @GetMapping("/{id}")
     public ResponseEntity<UsersDto> getUserById(@PathVariable UUID id) {
@@ -23,13 +23,13 @@ public class UsersController {
         return ResponseEntity.ok(user);
     }
 
-    @GetMapping("/email")
+    @GetMapping("/email/")
     public ResponseEntity<UsersDto> getUserByEmail(@RequestParam @Valid String email) {
         UsersDto userDto = usersService.getUserByEmail(email);
         return ResponseEntity.ok(userDto);
     }
 
-    @GetMapping("/{by-ids}")
+    @GetMapping("/batch")
     public ResponseEntity<List<UsersDto>> getUsersByIds(@RequestBody List<UUID> ids) {
         List<UsersDto> user = usersService.getUsersByIds(ids);
         return ResponseEntity.ok(user);

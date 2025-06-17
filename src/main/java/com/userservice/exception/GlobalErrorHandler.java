@@ -18,4 +18,12 @@ public class GlobalErrorHandler {
         errorBody.put("message", ex.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorBody);
     }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<?> handleCardInfoNotFound(NotFoundException ex) {
+        Map<String, String> body = new HashMap<>();
+        body.put("error", "Entity not found");
+        body.put("message", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
+    }
 }

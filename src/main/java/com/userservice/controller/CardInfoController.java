@@ -4,6 +4,7 @@ import com.userservice.dto.CardInfoDto;
 import com.userservice.service.CardInfoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,10 +13,10 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/card_infos")
 @RequiredArgsConstructor
 public class CardInfoController {
-    CardInfoService cardInfoService;
+    private final CardInfoService cardInfoService;
 
     @GetMapping("/{id}")
     public ResponseEntity<CardInfoDto> getCardInfoById(@PathVariable UUID id) {
@@ -23,7 +24,7 @@ public class CardInfoController {
         return ResponseEntity.ok(cardInfoDto);
     }
 
-    @GetMapping("/{by-ids}")
+    @GetMapping("/batch")
     public ResponseEntity<List<CardInfoDto>> getCardInfosByIds(@RequestBody List<UUID> ids) {
         List<CardInfoDto> cardInfoDto = cardInfoService.getCardInfosByIds(ids);
         return ResponseEntity.ok(cardInfoDto);

@@ -9,14 +9,14 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import java.util.HashMap;
 import java.util.Map;
 
-@ControllerAdvice(assignableTypes = CardInfoController.class)
+@ControllerAdvice()
 public class CardInfoErrorHandler {
 
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<?> handleCardInfoNotFound(NotFoundException ex) {
-        Map<String, String> body = new HashMap<>();
-        body.put("error", "Card info not found");
-        body.put("message", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
-    }
+//    @ExceptionHandler(NotFoundException.class)
+//    public ResponseEntity<?> handleCardInfoNotFound(NotFoundException ex) {
+//        Map<String, String> body = new HashMap<>();
+//        body.put("error", "Empty info not found");
+//        body.put("message", ex.getMessage());
+//        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
+//    }
 }

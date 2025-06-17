@@ -8,6 +8,9 @@ import com.userservice.repository.UsersRepository;
 import com.userservice.service.UsersService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,18 +20,20 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class UsersServiceImpl implements UsersService {
-
+    private final CacheManager cacheManager;
     private final UsersRepository usersRepository;
     private final UsersMapper usersMapper;
 
     @Override
+    @Cacheable(value = "users", key = "#id")
     public UsersDto getUserById(UUID id) {
-        return usersRepository.findUsersById(id)
-                .map(usersMapper::entityToDto)
+        Users users = usersRepository.findUsersById(id)
                 .orElseThrow(() -> new NotFoundException("User not found with Id: " + id));
+        return usersMapper.entityToDto(users);
     }
 
     @Override
+    @Cacheable(value = "users", key = "#email")
     public UsersDto getUserByEmail(String email) {
         return usersRepository.findByEmail(email)
                 .map(usersMapper::entityToDto)
@@ -50,7 +55,9 @@ public class UsersServiceImpl implements UsersService {
     @Transactional
     public void createUser(UsersDto userDto) {
         Users entity = usersMapper.dtoToEntity(userDto);
-        usersRepository.save(entity);
+        Users createdEntity = usersRepository.save(entity);
+
+        cacheManager.getCache("users").put(createdEntity.getId(), usersMapper.entityToDto(createdEntity));
     }
 
     @Override
@@ -59,10 +66,14 @@ public class UsersServiceImpl implements UsersService {
         Users entity = usersRepository.findUsersById(userDto.getId())
                 .orElseThrow(() -> new NotFoundException("User not found with Id: " + userDto.getId()));
         usersMapper.updateUsersFromDto(userDto, entity);
+        Users updatedEntity = usersRepository.save(entity);
+
+        cacheManager.getCache("users").put(updatedEntity.getId(), usersMapper.entityToDto(updatedEntity));
     }
 
     @Override
     @Transactional
+    @CacheEvict(value = "users", key = "#userDto.id")
     public void deleteUser(UsersDto userDto) {
         Users entity = usersRepository.findUsersById(userDto.getId())
                 .orElseThrow(() -> new NotFoundException("User not found with Id: " + userDto.getId()));

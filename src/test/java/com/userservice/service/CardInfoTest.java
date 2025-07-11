@@ -1,16 +1,11 @@
 package com.userservice.service;
 
 import com.userservice.dto.CardInfoDto;
-import com.userservice.dto.UsersDto;
 import com.userservice.entity.CardInfo;
-import com.userservice.entity.Users;
 import com.userservice.exception.NotFoundException;
 import com.userservice.mapper.CardInfoMapper;
-import com.userservice.mapper.UsersMapper;
 import com.userservice.repository.CardInfoRepository;
-import com.userservice.repository.UsersRepository;
 import com.userservice.service.impl.CardInfoServiceImpl;
-import com.userservice.service.impl.UsersServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

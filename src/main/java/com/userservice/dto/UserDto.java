@@ -13,12 +13,10 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UsersDto {
+public class UserDto {
     private UUID id;
-    @NotNull
     @Size(max = 50, message = "Name should not be more than 50 characters")
     private String name;
-    @NotNull
     @Size(max = 50, message = "Name should not be more than 50 characters")
     private String surname;
     private LocalDate birthDate;

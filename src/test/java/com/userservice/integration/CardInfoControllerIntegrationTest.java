@@ -3,7 +3,7 @@ package com.userservice.integration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.userservice.dto.CardInfoDto;
 import com.userservice.entity.CardInfo;
-import com.userservice.entity.Users;
+import com.userservice.entity.User;
 import com.userservice.repository.CardInfoRepository;
 import com.userservice.repository.UsersRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,12 +61,12 @@ public class CardInfoControllerIntegrationTest {
 
     @BeforeEach
     public void setUp() {
-        Users user = new Users();
+        User user = new User();
         user.setName("TestName");
         user.setSurname("TestSurname");
         user.setEmail("test@test.com");
         user.setBirthDate(LocalDate.of(1990, 1, 1));
-        Users savedUser = usersRepository.save(user);
+        User savedUser = usersRepository.save(user);
         userTestId = savedUser.getId();
 
         CardInfo cardInfo = new CardInfo();

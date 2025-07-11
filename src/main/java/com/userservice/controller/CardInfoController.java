@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/card_infos")
+@RequestMapping("/api/card_info")
 @RequiredArgsConstructor
 public class CardInfoController {
     private final CardInfoService cardInfoService;

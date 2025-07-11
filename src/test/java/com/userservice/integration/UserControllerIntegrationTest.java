@@ -1,8 +1,8 @@
 package com.userservice.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.userservice.dto.UsersDto;
-import com.userservice.entity.Users;
+import com.userservice.dto.UserDto;
+import com.userservice.entity.User;
 import com.userservice.repository.UsersRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc(addFilters = false)
-public class UsersControllerIntegrationTest {
+public class UserControllerIntegrationTest {
 
     @Container
     public static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:13")
@@ -57,12 +57,12 @@ public class UsersControllerIntegrationTest {
 
     @BeforeEach
     public void setUp() {
-        Users user = new Users();
+        User user = new User();
         user.setName("TestName");
         user.setSurname("TestSurname");
         user.setEmail("test@test.com");
         user.setBirthDate(LocalDate.of(1990, 1, 1));
-        Users savedUser = usersRepository.save(user);
+        User savedUser = usersRepository.save(user);
         userTestId = savedUser.getId();
         userEmail = savedUser.getEmail();
     }
@@ -87,13 +87,13 @@ public class UsersControllerIntegrationTest {
 
     @Test
     public void testCreateUser() throws Exception {
-        UsersDto usersDto = new UsersDto();
-        usersDto.setName("John");
-        usersDto.setSurname("Wick");
-        usersDto.setEmail("johnwick@gmail.com");
-        usersDto.setBirthDate(LocalDate.of(1991, 6, 30));
+        UserDto userDto = new UserDto();
+        userDto.setName("John");
+        userDto.setSurname("Wick");
+        userDto.setEmail("johnwick@gmail.com");
+        userDto.setBirthDate(LocalDate.of(1991, 6, 30));
 
-        String jsonContent = objectMapper.writeValueAsString(usersDto);
+        String jsonContent = objectMapper.writeValueAsString(userDto);
 
         mockMvc.perform(post("/api/user")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -103,12 +103,12 @@ public class UsersControllerIntegrationTest {
 
     @Test
     public void testUpdateUser() throws Exception {
-        UsersDto usersDto = new UsersDto();
-        usersDto.setId(userTestId);
-        usersDto.setName("Updated name");
-        usersDto.setSurname("Updated surname");
+        UserDto userDto = new UserDto();
+        userDto.setId(userTestId);
+        userDto.setName("Updated name");
+        userDto.setSurname("Updated surname");
 
-        String jsonContent = objectMapper.writeValueAsString(usersDto);
+        String jsonContent = objectMapper.writeValueAsString(userDto);
 
         mockMvc.perform(put("/api/user")
                         .contentType(MediaType.APPLICATION_JSON)

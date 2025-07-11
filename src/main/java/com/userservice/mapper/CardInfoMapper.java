@@ -2,7 +2,7 @@ package com.userservice.mapper;
 
 import com.userservice.dto.CardInfoDto;
 import com.userservice.entity.CardInfo;
-import com.userservice.entity.Users;
+import com.userservice.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -19,11 +19,11 @@ public interface CardInfoMapper {
 
     void updateCardInfoDto(CardInfoDto cardInfoDto, @MappingTarget CardInfo entity);
 
-    default Users map(UUID userId) {
+    default User map(UUID userId) {
         if (userId == null) {
             return null;
         }
-        Users user = new Users();
+        User user = new User();
         user.setId(userId);
         return user;
     }

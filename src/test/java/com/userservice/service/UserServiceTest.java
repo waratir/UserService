@@ -1,7 +1,7 @@
 package com.userservice.service;
 
-import com.userservice.dto.UsersDto;
-import com.userservice.entity.Users;
+import com.userservice.dto.UserDto;
+import com.userservice.entity.User;
 import com.userservice.exception.NotFoundException;
 import com.userservice.mapper.UsersMapper;
 import com.userservice.repository.UsersRepository;
@@ -27,7 +27,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class UsersServiceTest {
+public class UserServiceTest {
     private static final String USER_EMAIL = "test@test.com";
 
     @InjectMocks
@@ -46,21 +46,21 @@ public class UsersServiceTest {
     private CacheManager cacheManager;
 
     private UUID userId;
-    private UsersDto userDto;
-    private Users userEntity;
+    private UserDto userDto;
+    private User userEntity;
 
     @BeforeEach
     public void setup() {
         lenient().when(cacheManager.getCache("users")).thenReturn(cache);
         userId = UUID.randomUUID();
 
-        userDto = new UsersDto();
+        userDto = new UserDto();
         userDto.setId(userId);
         userDto.setName("TestName");
         userDto.setSurname("TestSurname");
         userDto.setEmail(USER_EMAIL);
 
-        userEntity = new Users();
+        userEntity = new User();
         userEntity.setId(userId);
         userEntity.setName("TestName");
         userEntity.setSurname("TestSurname");
@@ -72,7 +72,7 @@ public class UsersServiceTest {
         when(usersRepository.findUsersById(userId)).thenReturn(Optional.of(userEntity));
         when(usersMapper.entityToDto(userEntity)).thenReturn(userDto);
 
-        UsersDto result = usersService.getUserById(userId);
+        UserDto result = usersService.getUserById(userId);
 
         assertNotNull(result);
         assertEquals(userDto, result);
@@ -94,7 +94,7 @@ public class UsersServiceTest {
         when(usersRepository.findByEmail(USER_EMAIL)).thenReturn(Optional.of(userEntity));
         when(usersMapper.entityToDto(userEntity)).thenReturn(userDto);
 
-        UsersDto result = usersService.getUserByEmail(USER_EMAIL);
+        UserDto result = usersService.getUserByEmail(USER_EMAIL);
 
         assertEquals(userDto, result);
         assertNotNull(result);
@@ -112,30 +112,30 @@ public class UsersServiceTest {
     @Test
     public void testGetUsersByIds_Found() {
         List<UUID> ids = Arrays.asList(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID());
-        List<Users> entities = Arrays.asList(
-                new Users(),
-                new Users(),
-                new Users()
+        List<User> entities = Arrays.asList(
+                new User(),
+                new User(),
+                new User()
         );
-        List<UsersDto> usersDtos = Arrays.asList(
-                new UsersDto(),
-                new UsersDto(),
-                new UsersDto()
+        List<UserDto> userDtos = Arrays.asList(
+                new UserDto(),
+                new UserDto(),
+                new UserDto()
         );
 
         when(usersRepository.findByIdIn(ids)).thenReturn(entities);
 
-        when(usersMapper.entityToDto(entities.get(0))).thenReturn(usersDtos.get(0));
-        when(usersMapper.entityToDto(entities.get(1))).thenReturn(usersDtos.get(1));
-        when(usersMapper.entityToDto(entities.get(2))).thenReturn(usersDtos.get(2));
+        when(usersMapper.entityToDto(entities.get(0))).thenReturn(userDtos.get(0));
+        when(usersMapper.entityToDto(entities.get(1))).thenReturn(userDtos.get(1));
+        when(usersMapper.entityToDto(entities.get(2))).thenReturn(userDtos.get(2));
 
-        List<UsersDto> result = usersService.getUsersByIds(ids);
+        List<UserDto> result = usersService.getUsersByIds(ids);
 
         assertEquals(3, result.size());
 
-        assertEquals(usersDtos.get(0), result.get(0));
-        assertEquals(usersDtos.get(1), result.get(1));
-        assertEquals(usersDtos.get(2), result.get(2));
+        assertEquals(userDtos.get(0), result.get(0));
+        assertEquals(userDtos.get(1), result.get(1));
+        assertEquals(userDtos.get(2), result.get(2));
 
         verify(usersMapper).entityToDto(entities.get(0));
         verify(usersMapper).entityToDto(entities.get(1));
@@ -153,14 +153,14 @@ public class UsersServiceTest {
 
     @Test
     public void testCreateUser() {
-        when(usersMapper.dtoToEntity(any(UsersDto.class))).thenReturn(userEntity);
-        when(usersRepository.save(any(Users.class))).thenReturn(userEntity);
-        when(usersMapper.entityToDto(any(Users.class))).thenReturn(userDto);
+        when(usersMapper.dtoToEntity(any(UserDto.class))).thenReturn(userEntity);
+        when(usersRepository.save(any(User.class))).thenReturn(userEntity);
+        when(usersMapper.entityToDto(any(User.class))).thenReturn(userDto);
 
         usersService.createUser(userDto);
 
         verify(usersMapper).dtoToEntity(userDto);
-        verify(usersRepository).save(any(Users.class));
+        verify(usersRepository).save(any(User.class));
         verify(cache).put(eq(userEntity.getId()), eq(userDto));
     }
 
@@ -168,8 +168,8 @@ public class UsersServiceTest {
     public void testUpdateUser() {
         when(usersRepository.findUsersById(any())).thenReturn(Optional.of(userEntity));
         doNothing().when(usersMapper).updateUsersFromDto(any(), any());
-        when(usersRepository.save(any(Users.class))).thenReturn(userEntity);
-        when(usersMapper.entityToDto(any(Users.class))).thenReturn(userDto);
+        when(usersRepository.save(any(User.class))).thenReturn(userEntity);
+        when(usersMapper.entityToDto(any(User.class))).thenReturn(userDto);
 
         usersService.updateUser(userDto);
 

@@ -2,7 +2,7 @@ services:
   service:
     build: .
     ports:
-      - "8080:8080"  # порт вашего сервиса
+      - "8081:8081"  # порт вашего сервиса
     environment:
       - POSTGRES_HOST=postgres
       - POSTGRES_PORT=5432
@@ -19,9 +19,9 @@ services:
   postgres:
     image: postgres:13
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
-      POSTGRES_DB: userService
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: UserService
     ports:
       - "5432:5432"
     volumes:

@@ -1,18 +1,17 @@
 package com.userservice.mapper;
 
-import com.userservice.dto.UsersDto;
-import com.userservice.entity.Users;
+import com.userservice.dto.UserDto;
+import com.userservice.entity.User;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface UsersMapper {
 
-    UsersDto entityToDto(Users entity);
+    UserDto entityToDto(User entity);
 
-    Users dtoToEntity(UsersDto dto);
+    User dtoToEntity(UserDto dto);
 
-    void updateUsersFromDto(UsersDto userDto, @MappingTarget Users entity);
+    void updateUsersFromDto(UserDto userDto, @MappingTarget User entity);
 }

@@ -17,7 +17,7 @@ import java.util.UUID;
 @Entity
 @DynamicUpdate
 @Table (name = "users")
-public class Users {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

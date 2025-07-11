@@ -2,17 +2,17 @@ package com.userservice.service.impl;
 
 import com.userservice.dto.CardInfoDto;
 import com.userservice.entity.CardInfo;
-import com.userservice.entity.Users;
+import com.userservice.entity.User;
 import com.userservice.exception.NotFoundException;
 import com.userservice.mapper.CardInfoMapper;
 import com.userservice.repository.CardInfoRepository;
 import com.userservice.repository.UsersRepository;
 import com.userservice.service.CardInfoService;
-import com.userservice.service.UsersService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -48,28 +48,26 @@ public class CardInfoServiceImpl implements CardInfoService {
     }
 
     @Override
+    @CachePut(value = "card_info", key = "#result.id")
     public void createCardInfo(CardInfoDto cardInfoDto) {
         CardInfo cardInfo = cardInfoMapper.dtoToEntity(cardInfoDto);
 
         if (cardInfoDto.getUserId() != null) {
-            Users user = usersRepository.findById(cardInfoDto.getUserId())
+            User user = usersRepository.findById(cardInfoDto.getUserId())
                     .orElseThrow(() -> new NotFoundException("User not found"));
             cardInfo.setUser(user);
         }
 
-        CardInfo createdEntity = cardInfoRepository.save(cardInfo);
-
-        cacheManager.getCache("card_info").put(createdEntity.getId(), cardInfoMapper.entityToDto(createdEntity));
+        cardInfoRepository.save(cardInfo);
     }
 
     @Override
+    @CachePut(value = "card_info", key = "#cardInfoDto.id")
     public void updateCardInfo(CardInfoDto cardInfoDto) {
         CardInfo entity = cardInfoRepository.findCardInfoById(cardInfoDto.getId())
                 .orElseThrow(() -> new NotFoundException("Card info not found with id: " + cardInfoDto.getId()));
         cardInfoMapper.updateCardInfoDto(cardInfoDto, entity);
-        CardInfo updatedEntity = cardInfoRepository.save(entity);
-
-        cacheManager.getCache("card_info").put(updatedEntity.getId(), cardInfoMapper.entityToDto(updatedEntity));
+        cardInfoRepository.save(entity);
     }
 
     @Override
